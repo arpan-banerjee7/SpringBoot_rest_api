@@ -14,7 +14,6 @@ public class EntityToDtoMapper {
 	
 //	public CustomerDto mapToDto(Customer customer){
 //		ModelMapper modelMapper = new ModelMapper();
-//		// user here is a prepopulated User instance
 //		CustomerDto customerDto = modelMapper.map(customer, CustomerDto.class);
 //		return customerDto;
 //	}
@@ -52,7 +51,6 @@ public class EntityToDtoMapper {
 	}
 //	public Customer mapToEntity(CustomerDto customerDto) {
 //		ModelMapper modelMapper = new ModelMapper();
-//		// user here is a prepopulated User instance
 //		Customer customer = modelMapper.map(customerDto, Customer.class);
 //		return customer;
 //	}

@@ -32,9 +32,7 @@ class HomeControllerTest {
 	
 	@MockBean
 	private CustomerService customerService;
-	
-	@Autowired
-	private PropertyService propertyService;
+
 	
 	
 	@BeforeEach
@@ -51,7 +49,7 @@ class HomeControllerTest {
 				.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(custDto)))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
-		//Assertions.assertEquals(actualResult, "Customer with "+custDto.getId()+" sucessfully added");
+		Assertions.assertEquals(actualResult, "Customer with "+custDto.getId()+" sucessfully added");
 	}
 
 	private CustomerDto mockCustomerObject() {

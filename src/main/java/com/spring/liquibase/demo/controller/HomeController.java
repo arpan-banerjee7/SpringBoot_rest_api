@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.liquibase.demo.dto.CustomerDto;
@@ -27,20 +29,28 @@ public class HomeController {
 	@Autowired
 	private PropertyService propertyService;
 	
+	@Value("${customer.auth.key}")
+	private  String customerAuthKey;
+
 	@Autowired
 	private EntityToDtoMapper mapper;
 	
 	@GetMapping(path="/customers",produces= {"application/xml"})
 	public CustomerDtoList getCustomers(){
+		
 		CustomerDtoList cusDtoList=new CustomerDtoList();
 	cusDtoList=customerService.getCustomers();
 		return cusDtoList;
 	}
 
 	@GetMapping(path="/customer/{id}",produces= {"application/xml"})
-	public CustomerDto getCustomer(@PathVariable("id")int id){
+	public ResponseEntity<CustomerDto> getCustomer(@PathVariable("id")int id ,@RequestHeader("authKey") String language){
+		System.out.println(propertyService.getKeytoAddCustomer());
+		if(language.equals(customerAuthKey)) {
 		CustomerDto customerDto=customerService.getCustomer(id);
-		return customerDto;
+		return new ResponseEntity<>(customerDto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
 	
 	@PostMapping("/customer")
@@ -59,6 +69,11 @@ public class HomeController {
 		finalMessage= new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
 	}
 		return finalMessage;
+	}
+	
+	public String test() {
+		String s=customerService.test();
+		return s;
 	}
 
 }

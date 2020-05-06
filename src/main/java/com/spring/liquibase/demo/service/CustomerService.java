@@ -47,4 +47,11 @@ public class CustomerService {
 	    return customer;
 	}
 	
+	//example cannot use a local variable without initializing its value;
+	public String test() {
+//		int a;
+//		int b=a+10;
+		return "Arpan";
+		
+	}
 }

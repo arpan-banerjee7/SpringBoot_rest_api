@@ -36,7 +36,7 @@ public class CustomerService {
 		return customerDtoList;
 	}
 	
-	public CustomerDto getCustomer(int id) {
+	public CustomerDto getCustomerById(int id) {
 		Customer customer = customerRepository.findById(id).orElse(new Customer());
 		CustomerDto customerDto=entityToDto.mapToDto(customer);
 		return customerDto;
@@ -46,6 +46,11 @@ public class CustomerService {
 	    customerRepository.save(customer);
 	    return customer;
 	}
+	
+	public void deleteCustomerById(int id) {
+		customerRepository.deleteById(id);
+	}
+	
 	
 	//example cannot use a local variable without initializing its value;
 	public String test() {

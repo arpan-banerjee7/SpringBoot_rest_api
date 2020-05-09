@@ -21,7 +21,7 @@ import com.spring.liquibase.demo.dto.CustomerDto;
 
 public class ClientUtility {
 
-
+//here with spring boot u cannot access the prop from porp files in a separate main class.
 	@Value("${customer.auth.key}")
 	private String customerAuthKey;
 
@@ -37,7 +37,7 @@ public class ClientUtility {
 		// add basic authentication header
 		headers.set("authKey", "6AE-BH3-24F-67FG-76G-345G-AGF6H");
 		System.out.println(customerAuthKey);
-		System.out.println(propertyService.getKeytoAddCustomer());
+		//System.out.println(propertyService.getKeytoAddCustomer());
 		// build the request
 		HttpEntity<CustomerDto> request = new HttpEntity<CustomerDto>(headers);
 
@@ -56,10 +56,9 @@ public class ClientUtility {
 
 	public static void main(String[] args) {
 		
-		ApplicationContext applicationContext = SpringApplication.run(ClientUtility .class, args);
-		ClientUtility clientUtility = applicationContext.getBean(ClientUtility.class);     
+	
 		
-		//ClientUtility clientUtility= new ClientUtility();
+		ClientUtility clientUtility= new ClientUtility();
 		clientUtility.getCustomers();
 
 	}

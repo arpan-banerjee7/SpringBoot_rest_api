@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,10 +45,10 @@ public class HomeController {
 	}
 
 	@GetMapping(path="/customer/{id}",produces= {"application/xml"})
-	public ResponseEntity<CustomerDto> getCustomer(@PathVariable("id")int id ,@RequestHeader("authKey") String language){
+	public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id")int id ,@RequestHeader("authKey") String language){
 		System.out.println(propertyService.getKeytoAddCustomer());
 		if(language.equals(customerAuthKey)) {
-		CustomerDto customerDto=customerService.getCustomer(id);
+		CustomerDto customerDto=customerService.getCustomerById(id);
 		return new ResponseEntity<>(customerDto, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -70,6 +71,23 @@ public class HomeController {
 	}
 		return finalMessage;
 	}
+	
+
+	  @DeleteMapping("/customer/{id}")
+	 public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
+		  String message="";
+		  ResponseEntity<String> finalMessage=null;
+		  try {
+			  customerService.deleteCustomerById(id);
+			  message="Customer with "+id+" successfully deleted";
+			  finalMessage= new ResponseEntity<>(message, HttpStatus.OK);
+			  return finalMessage;
+		  }catch(Exception e) {
+			  message="Failed to delete customer due to :"+e.getMessage();
+			  finalMessage= new ResponseEntity<>(message, HttpStatus.GONE);
+		  }
+		  return finalMessage;
+	  }
 	
 	public String test() {
 		String s=customerService.test();

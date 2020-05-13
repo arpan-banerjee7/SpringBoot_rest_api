@@ -13,7 +13,7 @@ public class CustomerDtoList {
 
 	@JacksonXmlProperty(localName = "Customer")
     @JacksonXmlElementWrapper(useWrapping = false)
-	private List<CustomerDto> customerDtoList=new ArrayList<>();;
+	private List<CustomerDto> customerDtoList=new ArrayList<>();
 	
 	public void addCustomerDto(CustomerDto customerDto) {
 		

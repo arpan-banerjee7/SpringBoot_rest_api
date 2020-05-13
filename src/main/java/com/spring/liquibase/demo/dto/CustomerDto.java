@@ -15,6 +15,7 @@ public class CustomerDto {
 	private String gender;
 	private Date date;
 	private AddressDto addressdto;
+	private String authId;
 	
 	
 	public CustomerDto() {
@@ -23,6 +24,22 @@ public class CustomerDto {
 	
 	
 	
+
+
+	public String getAuthId() {
+		return authId;
+	}
+
+
+
+
+
+	public void setAuthId(String authId) {
+		this.authId = authId;
+	}
+
+
+
 
 
 	public AddressDto getAddressdto() {

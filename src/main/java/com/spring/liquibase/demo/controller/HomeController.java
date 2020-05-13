@@ -1,8 +1,5 @@
 package com.spring.liquibase.demo.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,73 +21,81 @@ import com.spring.liquibase.demo.utility.PropertyService;
 
 @RestController
 public class HomeController {
-	
+
 	@Autowired
 	private CustomerService customerService;
 	@Autowired
 	private PropertyService propertyService;
-	
+
 	@Value("${customer.auth.key}")
-	private  String customerAuthKey;
+	private String customerAuthKey;
 
 	@Autowired
 	private EntityToDtoMapper mapper;
-	
-	@GetMapping(path="/customers",produces= {"application/xml"})
-	public CustomerDtoList getCustomers(){
-		
-		CustomerDtoList cusDtoList=new CustomerDtoList();
-	cusDtoList=customerService.getCustomers();
+
+	@GetMapping(path = "/customers", produces = { "application/xml" })
+	public CustomerDtoList getCustomers() {
+
+		CustomerDtoList cusDtoList = new CustomerDtoList();
+		cusDtoList = customerService.getCustomers();
 		return cusDtoList;
 	}
 
-	@GetMapping(path="/customer/{id}",produces= {"application/xml"})
-	public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id")int id ,@RequestHeader("authKey") String language){
+	@GetMapping(path = "/customer/{id}", produces = { "application/xml" })
+	public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id") int id,
+			@RequestHeader("authKey") String language) {
 		System.out.println(propertyService.getKeytoAddCustomer());
-		if(language.equals(customerAuthKey)) {
-		CustomerDto customerDto=customerService.getCustomerById(id);
-		return new ResponseEntity<>(customerDto, HttpStatus.OK);
+		// validation through headers
+		if (language.equals(customerAuthKey)) {
+			CustomerDto customerDto = customerService.getCustomerById(id);
+			return new ResponseEntity<>(customerDto, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PostMapping("/customer")
-	 public ResponseEntity<String> addCustomer(@RequestBody CustomerDto customerDto){
-		String message="";
-		ResponseEntity<String> finalMessage=null;
+	public ResponseEntity<String> addCustomer(@RequestBody CustomerDto customerDto) {
+		String message = "";
+		ResponseEntity<String> finalMessage = null;
 		try {
-		
-		Customer customer=mapper.mapToEntity(customerDto);
-		customerService.addCustomer(customer);
-		message="Customer with "+customer.getId()+" sucessfully added";
-		finalMessage= new ResponseEntity<>(message, HttpStatus.OK);
-		
-	}catch(Exception e) {
-		message="Failed to add customer due to "+e.getMessage();
-		finalMessage= new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
-	}
+			if ((!customerDto.getAuthId().equals(propertyService.getKeytoAddCustomer()))) {
+				System.out.println("If check failed: "+propertyService.getKeytoAddCustomer());
+				System.out.println("Unauthorized access attempted");
+				message = "Unauthorized access attempted";
+				finalMessage = new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+			}
+			System.out.println("If check passed :"+propertyService.getKeytoAddCustomer());
+
+			Customer customer = mapper.mapToEntity(customerDto);
+			customerService.addCustomer(customer);
+			message = "Customer with " + customer.getId() + " sucessfully added";
+			finalMessage = new ResponseEntity<>(message, HttpStatus.OK);
+
+		} catch (Exception e) {
+			message = "Failed to add customer due to " + e.getMessage();
+			finalMessage = new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return finalMessage;
 	}
-	
 
-	  @DeleteMapping("/customer/{id}")
-	 public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
-		  String message="";
-		  ResponseEntity<String> finalMessage=null;
-		  try {
-			  customerService.deleteCustomerById(id);
-			  message="Customer with "+id+" successfully deleted";
-			  finalMessage= new ResponseEntity<>(message, HttpStatus.OK);
-			  return finalMessage;
-		  }catch(Exception e) {
-			  message="Failed to delete customer due to :"+e.getMessage();
-			  finalMessage= new ResponseEntity<>(message, HttpStatus.GONE);
-		  }
-		  return finalMessage;
-	  }
-	
+	@DeleteMapping("/customer/{id}")
+	public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
+		String message = "";
+		ResponseEntity<String> finalMessage = null;
+		try {
+			customerService.deleteCustomerById(id);
+			message = "Customer with " + id + " successfully deleted";
+			finalMessage = new ResponseEntity<>(message, HttpStatus.OK);
+			return finalMessage;
+		} catch (Exception e) {
+			message = "Failed to delete customer due to :" + e.getMessage();
+			finalMessage = new ResponseEntity<>(message, HttpStatus.GONE);
+		}
+		return finalMessage;
+	}
+
 	public String test() {
-		String s=customerService.test();
+		String s = customerService.test();
 		return s;
 	}
 

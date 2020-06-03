@@ -3,63 +3,58 @@ package com.spring.liquibase.demo.controller;
 import java.util.Date;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.liquibase.demo.dto.AddressDto;
 import com.spring.liquibase.demo.dto.CustomerDto;
+import com.spring.liquibase.demo.model.Address;
+import com.spring.liquibase.demo.model.Customer;
 import com.spring.liquibase.demo.service.CustomerService;
+import com.spring.liquibase.demo.utility.EntityToDtoMapper;
 import com.spring.liquibase.demo.utility.PropertyService;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 
+@WebMvcTest(HomeController.class)
 class HomeControllerTest {
+	@Autowired
 	private MockMvc mvc;
 
-	@InjectMocks
-	private HomeController homeController;
 
 	@MockBean
 	private CustomerService customerService;
-
-	@Mock
-	private PropertyService propertyService;
 	
-	@Mock
+	@MockBean
 	private Environment env;
 
-	@BeforeEach
-	public void setup() {
-		mvc = MockMvcBuilders.standaloneSetup(homeController).build();
-		MockitoAnnotations.initMocks(this);
-	}
-
+	@MockBean
+	private PropertyService propertyService;
+	
+	@MockBean
+	private EntityToDtoMapper mapper;
+	
 	@Test
 	public void testaddCustomer() throws Exception {
-		String uri = "/customer";
-		CustomerDto custDto = this.mockCustomerObject();
-		String actualResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON)
-						.content(asJsonString(custDto)))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
-		Assertions.assertEquals(actualResult, "Customer with " + custDto.getId() + " sucessfully added");
+	    String uri = "/customer";
+	    CustomerDto custDto = this.mockCustomerObject();
+	    Customer customer = getCustomerEntity();
+	    Mockito.when(mapper.mapToEntity(Mockito.any(CustomerDto.class))).thenReturn(customer);
+	    String actualResult = mvc
+	            .perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON)
+	                    .content(asJsonString(custDto)))
+	            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
+	    Assertions.assertEquals(actualResult, "Customer with " + custDto.getId() + " sucessfully added");
 	}
+
 
 	private CustomerDto mockCustomerObject() {
 		CustomerDto cusDto = new CustomerDto();
@@ -70,7 +65,7 @@ class HomeControllerTest {
 		cusDto.setFirstName("Biprojeet");
 		cusDto.setLastName("KAR");
 		cusDto.setGender("M");
-		cusDto.setAuthId(" 6AE-BH3-24F-67FG-76G-345G-AGF6H");
+		cusDto.setAuthId("6AE-BH3-24F-67FG-76G-345G-AGF6H");
 //		cusDto.setAuthId(propertyService.getKeytoAddCustomer());
 //		System.out.println(propertyService.getKeytoAddCustomer());
 		cusDto.setAddressdto(addressDto);
@@ -78,6 +73,19 @@ class HomeControllerTest {
 
 	}
 
+	private Customer getCustomerEntity() {
+	    Customer customer = new Customer();
+	    Address address = new Address();
+	    address.setCity("BBSR");
+	    address.setCountry("INDIA");
+	    customer.setDate(new Date());
+	    customer.setFirstName("Biprojeet");
+	    customer.setLastName("KAR");
+	    customer.setGender("M");
+	    customer.setAddress(address);
+	    return customer;
+
+	}
 	public static String asJsonString(CustomerDto cusDto) {
 		try {
 			return new ObjectMapper().writeValueAsString(cusDto);

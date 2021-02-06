@@ -32,8 +32,6 @@ build/
 
 ### Properties Files ###
 
-# exclude everything
-/src/main/resources/*
 
 # exception to the rule
 !/src/main/resources/.gitkeep 

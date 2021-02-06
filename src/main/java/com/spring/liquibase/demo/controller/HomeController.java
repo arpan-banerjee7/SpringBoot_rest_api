@@ -55,7 +55,7 @@ public class HomeController {
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/customer")
+	@PostMapping(path="/customer",consumes = {"application/xml", "application/json"}, produces = {"application/xml", "application/json"})
 	public ResponseEntity<String> addCustomer(@RequestBody CustomerDto customerDto) {
 		String message = "";
 		ResponseEntity<String> finalMessage = null;

@@ -50,6 +50,11 @@ public class CustomerService {
 		customerRepository.deleteById(id);
 	}
 	
+	public CustomerDto getFirstCustomerByGenderAndLastName(String gender,String lastName) {
+		Customer customer= customerRepository.findFirstByGenderAndLastName(gender,lastName);
+		CustomerDto customerDto=entityToDto.mapToDto(customer);
+		return customerDto;
+	}
 	
 	//example cannot use a local variable without initializing its value;
 	public String test() {

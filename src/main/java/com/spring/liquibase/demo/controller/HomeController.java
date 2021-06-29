@@ -96,6 +96,13 @@ public class HomeController {
 		}
 		return finalMessage;
 	}
+	
+	@GetMapping(path = "/firstCustomer/{gender}/{lastName}", produces = { "application/xml" })
+	public ResponseEntity<CustomerDto> getFirstCustomersByGender(@PathVariable String gender, @PathVariable String lastName) {
+		CustomerDto customerDto=customerService.getFirstCustomerByGenderAndLastName(gender,lastName);	
+		return new ResponseEntity<>(customerDto, HttpStatus.OK);
+	}
+
 
 	public String test() {
 		String s = customerService.test();
